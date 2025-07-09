@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
 import { AuthService } from "../services/authService";
-import { UserRegisterSchema } from "../dto/UserRegisterDto";
-import z from "zod/v4";
-import { UserLoginSchema } from "../dto/UserLoginDto";
 
 export class AuthController {
     private userService = new AuthService();

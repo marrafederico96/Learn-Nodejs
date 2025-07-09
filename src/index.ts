@@ -1,5 +1,5 @@
 import express from "express";
-import router from "./app/routes/authRoutes";
+import router from "./app/routes/appRoutes";
 
 const app = express();
 const port = 3000
@@ -7,7 +7,7 @@ const port = 3000
 app.use(express.static('public'));
 app.use(express.json());
 
-app.use("/auth", router);
+app.use("/", router);
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);

@@ -40,7 +40,7 @@ export class AuthService {
         const user: UserModel | null = await this.userRepository.findUserByUsername(userData.username);
 
         if (user === null) {
-            throw new UserNotFoundException(userData.username);
+            throw new UserNotFoundException();
         }
 
         const result = await Bcrypt.compare(userData.password, user.password_hash);
@@ -56,7 +56,7 @@ export class AuthService {
         const user: UserModel | null = await this.userRepository.findUserByUsername(username);
 
         if (user === null) {
-            throw new UserNotFoundException(username);
+            throw new UserNotFoundException();
         }
 
         const tokenList: Array<RefreshTokenDto> = await this.refreshTokenRepository.findRefreshTokenByUserId(user.user_id);
@@ -70,7 +70,7 @@ export class AuthService {
         const user: UserModel | null = await this.userRepository.findUserByUsername(username);
 
         if (user === null) {
-            throw new UserNotFoundException(username);
+            throw new UserNotFoundException();
         }
 
         await this.userRepository.deleteUser(user);
@@ -79,7 +79,7 @@ export class AuthService {
     async refreshToken(username: string): Promise<{ accessToken: string, refreshToken: string }> {
         const user: UserModel | null = await this.userRepository.findUserByUsername(username);
         if (user === null) {
-            throw new UserNotFoundException(username);
+            throw new UserNotFoundException();
         }
 
         return await this.tokenService.generateToken(user);

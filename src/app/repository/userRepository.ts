@@ -11,6 +11,27 @@ export class UserRepository {
 
     }
 
+    async findUserByUserId(user_id: number): Promise<UserModel | null> {
+        const result = await sql`
+            SELECT user_id, username, email, first_name, last_name, password_hash 
+            FROM users 
+            WHERE username=${user_id}`;
+
+        if (result.length === 0) {
+            return null;
+        }
+        const user: UserModel = {
+            user_id: result[0].user_id,
+            username: result[0].username,
+            email: result[0].email,
+            first_name: result[0].first_name,
+            last_name: result[0].last_name,
+            password_hash: result[0].password_hash
+        }
+        return user;
+
+    }
+
     async findUserByUsername(username: string): Promise<UserModel | null> {
         const result = await sql`
             SELECT user_id, username, email, first_name, last_name, password_hash 
