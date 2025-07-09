@@ -10,21 +10,16 @@ export class AuthController {
 
     async register(req: Request, res: Response) {
         try {
-            await this.userService.registerUser(await UserRegisterSchema.parseAsync(req.body));
+            await this.userService.registerUser(req.body);
             res.status(201).json({ message: "User registered successfully" });
         } catch (error: any) {
-            if (error instanceof z.ZodError) {
-                return res.status(400).json({ errors: error.issues })
-            }
-
-            res.status(400).json({ error: error.message })
-
+            res.status(400).json({ error: error.message });
         }
     }
 
     async login(req: Request, res: Response) {
         try {
-            const token = await this.userService.loginUser(await UserLoginSchema.parseAsync(req.body));
+            const token = await this.userService.loginUser(req.body);
             res.cookie("refresh_token", token.refreshToken, {
                 httpOnly: true,
                 maxAge: 15 * 24 * 60 * 60 * 1000,
@@ -34,10 +29,7 @@ export class AuthController {
             });
             res.status(201).json({ access_token: token.accessToken });
         } catch (error: any) {
-            if (error instanceof z.ZodError) {
-                res.status(400).json({ errors: error.issues })
-            }
-            res.status(400).json({ error: error.message })
+            res.status(400).json({ error: error.message });
         }
     }
 
@@ -74,6 +66,26 @@ export class AuthController {
                 sameSite: "strict"
             })
             res.status(204).send();
+        } catch (error: any) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    async refresh(req: Request, res: Response) {
+        try {
+            const username = (req as any).user?.username;
+            if (!username) {
+                return res.status(401).json({ error: "Utente non autenticato" });
+            }
+            const token = await this.userService.refreshToken(username);
+            res.cookie("refresh_token", token.refreshToken, {
+                httpOnly: true,
+                maxAge: 15 * 24 * 60 * 60 * 1000,
+                secure: true,
+                sameSite: "strict",
+                path: "/auth/refresh"
+            });
+            res.status(201).json({ access_token: token.accessToken });
         } catch (error: any) {
             res.status(400).json({ error: error.message });
         }

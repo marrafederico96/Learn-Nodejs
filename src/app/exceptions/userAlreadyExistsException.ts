@@ -1,9 +1,9 @@
 import { UserModel } from "../models/userModel";
 
-export class UserDataException extends Error {
+export class UserAlreadyExiststException extends Error {
     constructor() {
         super(`User already exists`);
-        this.name = "UserDataException";
+        this.name = "UserAlreadyExiststException";
     }
 
 }

@@ -1,30 +1,27 @@
 import { UserLoginDto } from "../dto/UserLoginDto";
 import { UserRegisterDto } from "../dto/UserRegisterDto";
-import { UserDataException } from "../exceptions/userDataException";
+import { UserAlreadyExiststException } from "../exceptions/userAlreadyExistsException";
 import { UserNotFoundException } from "../exceptions/userNotFoundException";
 import { UserModel } from "../models/userModel";
 import { UserRepository } from "../repository/userRepository";
 import Bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import fs from "fs";
-import { randomUUID } from "crypto";
 import { RefreshTokenRepository } from "../repository/refreshTokenRepository";
 import { UserInfoDto } from "../dto/UserInfoDto";
 import { RefreshTokenDto } from "../dto/RefreshTokenDto";
+import { TokenService } from "./tokenService";
+import { UserDataException } from "../exceptions/UserDataException";
 
 export class AuthService {
-
-    private privateKey = fs.readFileSync('./secrets/keys/key.pem');
-
     private userRepository = new UserRepository();
     private refreshTokenRepository = new RefreshTokenRepository();
+    private tokenService = new TokenService();
+
 
     async registerUser(userData: UserRegisterDto) {
-
         const user: UserModel | null = await this.userRepository.findUserByUsername(userData.username);
 
         if (user !== null) {
-            throw new UserDataException();
+            throw new UserAlreadyExiststException();
         }
 
         const newUser: UserInfoDto = {
@@ -38,6 +35,7 @@ export class AuthService {
         this.userRepository.addUser(newUser);
     }
 
+
     async loginUser(userData: UserLoginDto): Promise<{ accessToken: string, refreshToken: string }> {
         const user: UserModel | null = await this.userRepository.findUserByUsername(userData.username);
 
@@ -45,36 +43,14 @@ export class AuthService {
             throw new UserNotFoundException(userData.username);
         }
 
-        const creationDate = new Date();
-
-        const refreshToken: RefreshTokenDto = {
-            token_value: randomUUID(),
-            create_date: creationDate,
-            expire_date: new Date(creationDate.getTime() + 15 * 24 * 60 * 60 * 1000),
-            valid: true,
-            user_id: user.user_id
+        const result = await Bcrypt.compare(userData.password, user.password_hash);
+        if (result) {
+            return this.tokenService.generateToken(user);
+        } else {
+            throw new UserDataException();
         }
-
-        await this.refreshTokenRepository.addRefreshToken(refreshToken);
-
-        const accessToken = await new Promise<string>((resolve, reject) => {
-            jwt.sign(
-                { username: user.username },
-                this.privateKey,
-                { algorithm: "RS256", expiresIn: "10m" },
-                (err, token) => {
-                    if (token) {
-                        resolve(token);
-                    } else {
-                        reject(new Error("Failed to generate JWT token: " + err));
-                    }
-                }
-            );
-        });
-
-        return { accessToken, refreshToken: refreshToken.token_value };
-
     }
+
 
     async logoutUser(username: string) {
         const user: UserModel | null = await this.userRepository.findUserByUsername(username);
@@ -89,6 +65,7 @@ export class AuthService {
         }
     }
 
+
     async deleteUser(username: string) {
         const user: UserModel | null = await this.userRepository.findUserByUsername(username);
 
@@ -97,5 +74,15 @@ export class AuthService {
         }
 
         await this.userRepository.deleteUser(user);
+    }
+
+    async refreshToken(username: string): Promise<{ accessToken: string, refreshToken: string }> {
+        const user: UserModel | null = await this.userRepository.findUserByUsername(username);
+        if (user === null) {
+            throw new UserNotFoundException(username);
+        }
+
+        return await this.tokenService.generateToken(user);
+
     }
 }
