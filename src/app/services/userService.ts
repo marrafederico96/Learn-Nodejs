@@ -7,9 +7,11 @@ import { RefreshTokenDto } from "../dto/RefreshTokenDto";
 import { TokenService } from "./tokenService";
 import { UserException } from "../exceptions/UserException";
 import { UUID } from "crypto";
+import { GroupMemberRepository } from "../repository/groupMemberRepository";
 
-export class AuthService {
+export class UserService {
     private userRepository = new UserRepository();
+    private groupMemeberRepository = new GroupMemberRepository();
     private refreshTokenRepository = new RefreshTokenRepository();
     private tokenService = new TokenService();
 
@@ -68,6 +70,11 @@ export class AuthService {
 
         if (user === null) {
             throw new UserException("User not found");
+        }
+
+        const groups = await this.groupMemeberRepository.findGroupWithRoleAdmin(user);
+        if (groups.length > 0) {
+            throw new UserException("User is admin in a group");
         }
 
         await this.userRepository.deleteUser(user);

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { AuthService } from "../services/authService";
+import { UserService } from "../services/userService";
 
 export class AuthController {
-    private userService = new AuthService();
+    private userService = new UserService();
 
     async register(req: Request, res: Response) {
         try {
