@@ -8,6 +8,8 @@ import { UserInfoDto } from "../dto/UserInfoDto";
 import { RefreshTokenDto } from "../dto/RefreshTokenDto";
 import { TokenService } from "./tokenService";
 import { UserException } from "../exceptions/UserException";
+import { UUID } from "crypto";
+import { UsernameDto } from "../dto/UsernameDto";
 
 export class AuthService {
     private userRepository = new UserRepository();
@@ -81,6 +83,22 @@ export class AuthService {
         }
 
         return await this.tokenService.generateToken(user);
+
+    }
+
+    async getUsernameByToken(token_value: UUID): Promise<UsernameDto> {
+        const token: RefreshTokenDto = await this.refreshTokenRepository.findRefreshTokenByTokenValue(token_value);
+        const user: UserModel | null = await this.userRepository.findUserByUserId(token.user_id);
+
+        if (!user) {
+            throw new UserException("User not found");
+        }
+
+        const username: UsernameDto = {
+            username: user.username,
+        }
+
+        return username;
 
     }
 }

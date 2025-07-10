@@ -22,7 +22,6 @@ export class RefreshTokenRepository {
             SELECT token_value, valid, create_date, expire_date, user_id
             FROM refresh_tokens
             WHERE token_value=${token_value}
-            LIMIT 1
         `;
         const row = result[0];
         return {
