@@ -1,4 +1,3 @@
-import { RequestState } from "./frindshipRequestState";
 
 export interface FriendshipModel {
     friendship_id: number,
@@ -6,4 +5,10 @@ export interface FriendshipModel {
     user_receive_id: number,
     request_date: Date,
     request_state: RequestState
+}
+
+export enum RequestState {
+    PENDING = "PENDING",
+    ACCEPTED = "ACCEPTED",
+    DECLINE = "DECLINE"
 }
