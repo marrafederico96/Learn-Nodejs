@@ -1,6 +1,5 @@
 import * as z from "zod/v4"
 
-
 export const UserRegisterSchema = z.object({
     username: z.string().min(1, "Username is required"),
     first_name: z.string().min(1, "First name is required"),
@@ -13,4 +12,24 @@ export const UserRegisterSchema = z.object({
     path: ["confirmPassword"],
 });
 
+export const UserLoginSchema = z.object({
+    username: z.string(),
+    password: z.string()
+});
+
+export interface UserInfoDto {
+    username: string,
+    first_name: string,
+    last_name: string,
+    email: string,
+    password_hash: string
+}
+
+export const UsernameSchema = z.object({
+    username: z.string(),
+});
+
+export type UsernameDto = z.infer<typeof UsernameSchema>
+export type UserLoginDto = z.infer<typeof UserLoginSchema>
 export type UserRegisterDto = z.infer<typeof UserRegisterSchema>;
+

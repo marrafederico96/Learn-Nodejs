@@ -1,15 +1,12 @@
-import { UserLoginDto } from "../dto/UserLoginDto";
-import { UserRegisterDto } from "../dto/UserRegisterDto";
+import { UserInfoDto, UserLoginDto, UsernameDto, UserRegisterDto } from "../dto/UserDto";
 import { UserModel } from "../models/userModel";
 import { UserRepository } from "../repository/userRepository";
 import Bcrypt from "bcrypt";
 import { RefreshTokenRepository } from "../repository/refreshTokenRepository";
-import { UserInfoDto } from "../dto/UserInfoDto";
 import { RefreshTokenDto } from "../dto/RefreshTokenDto";
 import { TokenService } from "./tokenService";
 import { UserException } from "../exceptions/UserException";
 import { UUID } from "crypto";
-import { UsernameDto } from "../dto/UsernameDto";
 
 export class AuthService {
     private userRepository = new UserRepository();

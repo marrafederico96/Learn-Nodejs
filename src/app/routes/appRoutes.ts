@@ -2,10 +2,9 @@ import express from "express";
 import { AuthController } from "../controllers/authController";
 import { checkJwt } from "../middleware/authMiddleware";
 import { validateBody } from "../middleware/validateBodyMiddleware";
-import { UserRegisterSchema } from "../dto/UserRegisterDto";
-import { UserLoginSchema } from "../dto/UserLoginDto";
+import { UserLoginSchema, UserRegisterSchema } from "../dto/UserDto";
 import { FriendshipController } from "../controllers/friendshipController";
-import { FriendshipUsernameSchema } from "../dto/FriendshipUsernameDto";
+import { FriendshipUsernameSchema } from "../dto/FriendshipDto";
 
 const router = express.Router();
 const authController = new AuthController();;

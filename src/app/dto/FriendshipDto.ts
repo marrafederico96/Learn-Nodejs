@@ -8,4 +8,9 @@ export const FriendshipSchema = z.object({
     request_state: z.enum(RequestState)
 });
 
+export const FriendshipUsernameSchema = z.object({
+    username: z.string(),
+});
+
+export type FriendshipUsernameDto = z.infer<typeof FriendshipUsernameSchema>;
 export type FriendshipDto = z.infer<typeof FriendshipSchema>;

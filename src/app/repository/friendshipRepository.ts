@@ -1,7 +1,6 @@
 import sql from "../../db";
 import { FriendshipDto } from "../dto/FriendshipDto";
 import { FriendshipModel } from "../models/friendshipModel";
-import { RequestState } from "../models/frindshipRequestState";
 import { UserModel } from "../models/userModel";
 
 

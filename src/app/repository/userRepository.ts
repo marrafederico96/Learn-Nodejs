@@ -1,5 +1,5 @@
 import sql from "../../db";
-import { UserInfoDto } from "../dto/UserInfoDto";
+import { UserInfoDto } from "../dto/UserDto";
 import { UserModel } from "../models/userModel";
 
 export class UserRepository {
