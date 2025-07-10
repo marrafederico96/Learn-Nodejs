@@ -1,4 +1,5 @@
-import { RequestState } from "../models/frindshipRequestState"
+import { RequestState } from "../models/friendshipModel";
+
 import * as z from "zod/v4";
 
 export const FriendshipSchema = z.object({
