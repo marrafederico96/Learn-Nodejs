@@ -7,11 +7,14 @@ import { FriendshipController } from "../controllers/friendshipController";
 import { FriendshipUsernameSchema } from "../dto/FriendshipDto";
 import { GroupNameSchema } from "../dto/GroupDto";
 import { GroupController } from "../controllers/groupController";
+import { GroupMemberCreateSchema } from "../dto/GroupMemberDto";
+import { GroupMemberController } from "../controllers/groupMemberController";
 
 const router = express.Router();
 const authController = new AuthController();;
 const friendshipController = new FriendshipController();
 const groupController = new GroupController();
+const groupMemberController = new GroupMemberController();
 
 //Endpoint auth user
 router.post("/auth/register", validateBody(UserRegisterSchema), authController.register.bind(authController));
@@ -30,4 +33,7 @@ router.delete("/user/decline-request", checkJwt, validateBody(FriendshipUsername
 //endpoint group
 router.post("/user/group/create", checkJwt, validateBody(GroupNameSchema), groupController.create.bind(groupController));
 router.delete("/user/group/delete", checkJwt, validateBody(GroupNameSchema), groupController.delete.bind(groupController));
+
+//endpoint group member
+router.post("/user/group/add-member", checkJwt, validateBody(GroupMemberCreateSchema), groupMemberController.add.bind(groupMemberController));
 export default router;

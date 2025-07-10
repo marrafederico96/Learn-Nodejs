@@ -1,5 +1,6 @@
 import sql from "../../db";
 import { FriendshipDto } from "../dto/FriendshipDto";
+import { FriendshipException } from "../exceptions/friendshipException";
 import { FriendshipModel } from "../models/friendshipModel";
 import { UserModel } from "../models/userModel";
 
@@ -27,7 +28,7 @@ export class FriendshipRepository {
         OR (user_sender_id=${user_receive.user_id} AND user_receive_id=${user_sender.user_id})`;
 
         if (result.length === 0) {
-            return null;
+            throw new FriendshipException("Friendship not found");
         }
 
         const friendship: FriendshipModel = {

@@ -23,6 +23,7 @@ export class RefreshTokenRepository {
             FROM refresh_tokens
             WHERE token_value=${token_value}
         `;
+
         const row = result[0];
         return {
             token_value: row.token_value,
