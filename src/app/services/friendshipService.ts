@@ -13,8 +13,8 @@ export class FriendshipService {
 
     async addFriend(username_sender: string, username_receive: string) {
 
-        const user_sender: UserModel | null = await this.userRepository.findUserByUsername(username_sender);
-        const user_receive: UserModel | null = await this.userRepository.findUserByUsername(username_receive);
+        const user_sender: UserModel | null = await this.userRepository.findUserByUsername(username_sender.toLowerCase().trim());
+        const user_receive: UserModel | null = await this.userRepository.findUserByUsername(username_receive.toLowerCase().trim());
 
         if (user_sender && user_receive) {
             const friendship = await this.friendshipRepository.searchFriendship(user_sender, user_receive);
@@ -35,8 +35,8 @@ export class FriendshipService {
     }
 
     async acceptRequest(username_sender: string, username_receive: string) {
-        const user_sender: UserModel | null = await this.userRepository.findUserByUsername(username_sender);
-        const user_receive: UserModel | null = await this.userRepository.findUserByUsername(username_receive);
+        const user_sender: UserModel | null = await this.userRepository.findUserByUsername(username_sender.toLowerCase().trim());
+        const user_receive: UserModel | null = await this.userRepository.findUserByUsername(username_receive.toLowerCase().trim());
 
         if (user_sender && user_receive) {
             const friendship: FriendshipModel | null = await this.friendshipRepository.searchFriendship(user_sender, user_receive);
@@ -49,8 +49,8 @@ export class FriendshipService {
     }
 
     async deleteFriend(username_sender: string, username_receive: string) {
-        const user_sender: UserModel | null = await this.userRepository.findUserByUsername(username_sender);
-        const user_receive: UserModel | null = await this.userRepository.findUserByUsername(username_receive);
+        const user_sender: UserModel | null = await this.userRepository.findUserByUsername(username_sender.toLowerCase().trim());
+        const user_receive: UserModel | null = await this.userRepository.findUserByUsername(username_receive.toLowerCase().trim());
 
         if (user_sender && user_receive) {
             const friendship: FriendshipModel | null = await this.friendshipRepository.searchFriendship(user_sender, user_receive);

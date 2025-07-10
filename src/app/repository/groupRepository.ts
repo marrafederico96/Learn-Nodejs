@@ -16,19 +16,13 @@ export class GroupRepository {
         await sql`DELETE FROM groups WHERE group_id=${group.group_id}`;
     }
 
-    async findGroupByGroupNameAndAdminId(username: string, group_name: string): Promise<GroupModel | null> {
-        const user: UserModel | null = await this.userRepository.findUserByUsername(username);
-        if (user) {
-            const result: GroupModel[] = await sql`SELECT * FROM groups WHERE group_name=${group_name} AND admin_id=${user.user_id}`;
-            const groupModel: GroupModel = {
-                group_id: result[0].group_id,
-                group_name: result[0].group_name,
-                admin_id: result[0].admin_id
-            }
-            return groupModel;
-        } else {
-            throw new UserException("User not found");
+    async findGroupByGroupNameAndAdminId(user: UserModel, group_name: string): Promise<GroupModel | null> {
+        const result: GroupModel[] = await sql`SELECT * FROM groups WHERE group_name=${group_name} AND admin_id=${user.user_id}`;
+        const groupModel: GroupModel = {
+            group_id: result[0].group_id,
+            group_name: result[0].group_name,
+            admin_id: result[0].admin_id
         }
-
+        return groupModel;
     }
 }

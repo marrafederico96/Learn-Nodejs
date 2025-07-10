@@ -22,11 +22,11 @@ export class AuthService {
         }
 
         const newUser: UserInfoDto = {
-            username: userData.username,
-            first_name: userData.first_name,
-            last_name: userData.last_name,
-            email: userData.email,
-            password_hash: await Bcrypt.hash(userData.password, 10)
+            username: userData.username.toLowerCase().trim(),
+            first_name: userData.first_name.trim(),
+            last_name: userData.last_name.trim(),
+            email: userData.email.trim().toLowerCase(),
+            password_hash: (await Bcrypt.hash(userData.password, 10)).trim()
         }
 
         this.userRepository.addUser(newUser);
@@ -34,13 +34,13 @@ export class AuthService {
 
 
     async loginUser(userData: UserLoginDto): Promise<{ accessToken: string, refreshToken: string }> {
-        const user: UserModel | null = await this.userRepository.findUserByUsername(userData.username);
+        const user: UserModel | null = await this.userRepository.findUserByUsername(userData.username.toLowerCase().trim());
 
         if (user === null) {
             throw new UserException("User not found");
         }
 
-        const result = await Bcrypt.compare(userData.password, user.password_hash);
+        const result = await Bcrypt.compare(userData.password.trim(), user.password_hash);
         if (result) {
             return this.tokenService.generateToken(user);
         } else {
@@ -50,7 +50,7 @@ export class AuthService {
 
 
     async logoutUser(username: string) {
-        const user: UserModel | null = await this.userRepository.findUserByUsername(username);
+        const user: UserModel | null = await this.userRepository.findUserByUsername(username.toLowerCase().trim());
 
         if (user === null) {
             throw new UserException("User not found");
@@ -64,7 +64,7 @@ export class AuthService {
 
 
     async deleteUser(username: string) {
-        const user: UserModel | null = await this.userRepository.findUserByUsername(username);
+        const user: UserModel | null = await this.userRepository.findUserByUsername(username.trim().toLowerCase());
 
         if (user === null) {
             throw new UserException("User not found");
@@ -74,7 +74,7 @@ export class AuthService {
     }
 
     async refreshToken(username: string): Promise<{ accessToken: string, refreshToken: string }> {
-        const user: UserModel | null = await this.userRepository.findUserByUsername(username);
+        const user: UserModel | null = await this.userRepository.findUserByUsername(username.trim().toLowerCase());
         if (user === null) {
             throw new UserException("User not found");
         }

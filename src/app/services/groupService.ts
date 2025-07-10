@@ -18,11 +18,14 @@ export class GroupService {
     }
 
     async deleteGroup(admin_username: string, group_name: string) {
-        const group: GroupModel | null = await this.groupRepository.findGroupByGroupNameAndAdminId(admin_username, group_name);
-        if (group === null) {
-            throw new GroupException("Group not found");
+        const user: UserModel | null = await this.userRepository.findUserByUsername(admin_username);
+        if (user) {
+            const group: GroupModel | null = await this.groupRepository.findGroupByGroupNameAndAdminId(user, group_name);
+            if (group === null) {
+                throw new GroupException("Group not found");
+            }
+            await this.groupRepository.deleteGroup(group);
         }
-        await this.groupRepository.deleteGroup(group);
     }
 
 }
