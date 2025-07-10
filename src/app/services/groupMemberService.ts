@@ -27,6 +27,16 @@ export class GroupMemberService {
         } else {
             throw new GroupException("User or group not found ");
         }
+    }
 
+    async removeMember(group_create_info: GroupMemberCreateDto) {
+        const user: UserModel | null = await this.userRepository.findUserByUsername(group_create_info.username.trim().toLowerCase());
+        const group: GroupModel | null = await this.groupRepository.findGroupByName(group_create_info.group_name);
+
+        if (user && group) {
+            await this.groupMemeberRepository.removeGroupMember(user, group);
+        } else {
+            throw new GroupException("User or group not found ");
+        }
     }
 }

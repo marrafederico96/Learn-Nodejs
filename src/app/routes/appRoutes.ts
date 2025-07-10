@@ -36,4 +36,5 @@ router.delete("/user/group/delete", checkJwt, validateBody(GroupNameSchema), gro
 
 //endpoint group member
 router.post("/user/group/add-member", checkJwt, validateBody(GroupMemberCreateSchema), groupMemberController.add.bind(groupMemberController));
+router.delete("/suer/group/remove-member", checkJwt, validateBody(GroupMemberCreateSchema), groupMemberController.remove.bind(groupMemberController));
 export default router;
