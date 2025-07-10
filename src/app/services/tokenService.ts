@@ -1,13 +1,18 @@
-import { randomUUID } from "crypto";
+import { randomUUID, UUID } from "crypto";
 import { RefreshTokenDto } from "../dto/RefreshTokenDto";
 import { UserModel } from "../models/userModel";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import { RefreshTokenRepository } from "../repository/refreshTokenRepository";
+import { UserRepository } from "../repository/userRepository";
+import { UserException } from "../exceptions/UserException";
+import { UserInfoDto } from "../dto/UserInfoDto";
+import { UsernameDto } from "../dto/UsernameDto";
 
 export class TokenService {
     private privateKey = fs.readFileSync('./secrets/keys/key.pem');
     private refreshTokenRepository = new RefreshTokenRepository();
+    private userRepository = new UserRepository();
 
     async generateToken(user: UserModel): Promise<{ accessToken: string, refreshToken: string }> {
 
@@ -46,4 +51,19 @@ export class TokenService {
         return { accessToken, refreshToken: refreshToken.token_value };
     }
 
+    async getUserByToken(token_value: UUID): Promise<UsernameDto> {
+        const token: RefreshTokenDto = await this.refreshTokenRepository.findRefreshTokenByTokenValue(token_value);
+        const user: UserModel | null = await this.userRepository.findUserByUserId(token.user_id);
+
+        if (!user) {
+            throw new UserException("User not found");
+        }
+
+        const username: UsernameDto = {
+            username: user.username,
+        }
+
+        return username;
+
+    }
 }

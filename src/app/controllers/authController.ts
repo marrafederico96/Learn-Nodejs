@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { AuthService } from "../services/authService";
+import { TokenService } from "../services/tokenService";
 
 export class AuthController {
     private userService = new AuthService();
-
+    private tokenService = new TokenService();
 
     async register(req: Request, res: Response) {
         try {
@@ -70,11 +71,8 @@ export class AuthController {
 
     async refresh(req: Request, res: Response) {
         try {
-            const username = (req as any).user?.username;
-            if (!username) {
-                return res.status(401).json({ error: "Utente non autenticato" });
-            }
-            const token = await this.userService.refreshToken(username);
+            const username = await this.tokenService.getUserByToken(req.cookies['refresh_token']);
+            const token = await this.userService.refreshToken(username.username);
             res.cookie("refresh_token", token.refreshToken, {
                 httpOnly: true,
                 maxAge: 15 * 24 * 60 * 60 * 1000,

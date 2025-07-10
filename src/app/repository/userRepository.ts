@@ -15,7 +15,7 @@ export class UserRepository {
         const result = await sql`
             SELECT user_id, username, email, first_name, last_name, password_hash 
             FROM users 
-            WHERE username=${user_id}`;
+            WHERE user_id=${user_id}`;
 
         if (result.length === 0) {
             return null;
