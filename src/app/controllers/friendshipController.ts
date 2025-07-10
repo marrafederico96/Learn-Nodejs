@@ -12,8 +12,26 @@ export class FriendshipController {
         } catch (error: any) {
             res.status(400).json({ error: error.message });
         }
+    }
 
+    async deleteFriend(req: Request, res: Response) {
+        try {
+            const username_sender = (req as any).user?.username;
+            await this.friendship.deleteFriend(username_sender, req.body.username_receive);
+            res.status(200).json({ message: "Friendship delete" });
+        } catch (error: any) {
+            res.status(400).json({ error: error.message });
+        }
+    }
 
+    async accept(req: Request, res: Response) {
+        try {
+            const username_sender = (req as any).user?.username;
+            await this.friendship.acceptRequest(req.body.username_receive, username_sender);
+            res.status(200).json({ message: "Request state frinedhsip accepted" });
+        } catch (error: any) {
+            res.status(400).json({ error: error.message });
+        }
     }
 
 }

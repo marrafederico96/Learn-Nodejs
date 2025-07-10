@@ -1,6 +1,6 @@
 export class FriendshipException extends Error {
-    constructor() {
-        super(`Friendship already exists`);
+    constructor(message: string) {
+        super(message);
         this.name = "FriendshipException";
     }
 

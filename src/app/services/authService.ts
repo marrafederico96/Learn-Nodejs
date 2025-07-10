@@ -1,7 +1,5 @@
 import { UserLoginDto } from "../dto/UserLoginDto";
 import { UserRegisterDto } from "../dto/UserRegisterDto";
-import { UserAlreadyExiststException } from "../exceptions/userAlreadyExistsException";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
 import { UserModel } from "../models/userModel";
 import { UserRepository } from "../repository/userRepository";
 import Bcrypt from "bcrypt";
@@ -9,7 +7,7 @@ import { RefreshTokenRepository } from "../repository/refreshTokenRepository";
 import { UserInfoDto } from "../dto/UserInfoDto";
 import { RefreshTokenDto } from "../dto/RefreshTokenDto";
 import { TokenService } from "./tokenService";
-import { UserDataException } from "../exceptions/UserDataException";
+import { UserException } from "../exceptions/UserException";
 
 export class AuthService {
     private userRepository = new UserRepository();
@@ -21,7 +19,7 @@ export class AuthService {
         const user: UserModel | null = await this.userRepository.findUserByUsername(userData.username);
 
         if (user !== null) {
-            throw new UserAlreadyExiststException();
+            throw new UserException("User already exists");
         }
 
         const newUser: UserInfoDto = {
@@ -40,14 +38,14 @@ export class AuthService {
         const user: UserModel | null = await this.userRepository.findUserByUsername(userData.username);
 
         if (user === null) {
-            throw new UserNotFoundException();
+            throw new UserException("User not found");
         }
 
         const result = await Bcrypt.compare(userData.password, user.password_hash);
         if (result) {
             return this.tokenService.generateToken(user);
         } else {
-            throw new UserDataException();
+            throw new UserException("Wrong credentials");
         }
     }
 
@@ -56,7 +54,7 @@ export class AuthService {
         const user: UserModel | null = await this.userRepository.findUserByUsername(username);
 
         if (user === null) {
-            throw new UserNotFoundException();
+            throw new UserException("User not found");
         }
 
         const tokenList: Array<RefreshTokenDto> = await this.refreshTokenRepository.findRefreshTokenByUserId(user.user_id);
@@ -70,7 +68,7 @@ export class AuthService {
         const user: UserModel | null = await this.userRepository.findUserByUsername(username);
 
         if (user === null) {
-            throw new UserNotFoundException();
+            throw new UserException("User not found");
         }
 
         await this.userRepository.deleteUser(user);
@@ -79,7 +77,7 @@ export class AuthService {
     async refreshToken(username: string): Promise<{ accessToken: string, refreshToken: string }> {
         const user: UserModel | null = await this.userRepository.findUserByUsername(username);
         if (user === null) {
-            throw new UserNotFoundException();
+            throw new UserException("User not found");
         }
 
         return await this.tokenService.generateToken(user);

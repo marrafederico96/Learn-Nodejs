@@ -1,6 +1,7 @@
 import { FriendshipDto } from "../dto/FriendshipDto";
 import { FriendshipException } from "../exceptions/friendshipException";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
+import { UserException } from "../exceptions/UserException";
+import { FriendshipModel } from "../models/friendshipModel";
 import { RequestState } from "../models/frindshipRequestState";
 import { UserModel } from "../models/userModel";
 import { FriendshipRepository } from "../repository/friendshipRepository";
@@ -27,10 +28,38 @@ export class FriendshipService {
                 }
                 await this.friendshipRepository.addFriendship(newFriendship);
             } else {
-                throw new FriendshipException();
+                throw new FriendshipException("Friendship already exists");
             }
         } else {
-            throw new UserNotFoundException();
+            throw new UserException("Users not found");
+        }
+    }
+
+    async acceptRequest(username_sender: string, username_receive: string) {
+        const user_sender: UserModel | null = await this.userRepository.findUserByUsername(username_sender);
+        const user_receive: UserModel | null = await this.userRepository.findUserByUsername(username_receive);
+
+        if (user_sender && user_receive) {
+            const friendship: FriendshipModel | null = await this.friendshipRepository.searchFriendship(user_sender, user_receive);
+            if (friendship) {
+                await this.friendshipRepository.acceptRequest(friendship);
+            } else {
+                throw new FriendshipException("Friendship not found");
+            }
+        }
+    }
+
+    async deleteFriend(username_sender: string, username_receive: string) {
+        const user_sender: UserModel | null = await this.userRepository.findUserByUsername(username_sender);
+        const user_receive: UserModel | null = await this.userRepository.findUserByUsername(username_receive);
+
+        if (user_sender && user_receive) {
+            const friendship: FriendshipModel | null = await this.friendshipRepository.searchFriendship(user_sender, user_receive);
+            if (friendship) {
+                await this.friendshipRepository.deleteFriendship(friendship);
+            } else {
+                throw new FriendshipException("Friendship not found");
+            }
         }
     }
 

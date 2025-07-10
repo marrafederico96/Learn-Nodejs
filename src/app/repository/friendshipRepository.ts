@@ -1,6 +1,7 @@
 import sql from "../../db";
 import { FriendshipDto } from "../dto/FriendshipDto";
 import { FriendshipModel } from "../models/friendshipModel";
+import { RequestState } from "../models/frindshipRequestState";
 import { UserModel } from "../models/userModel";
 
 
@@ -10,6 +11,14 @@ export class FriendshipRepository {
         await sql`
         INSERT INTO friendships (user_sender_id, user_receive_id, request_date, request_state) 
         VALUES (${friendships.user_sender_id}, ${friendships.user_receive_id}, ${friendships.request_date}, ${friendships.request_state})`;
+    }
+
+    async deleteFriendship(friendship: FriendshipModel) {
+        await sql`DELETE FROM friendships WHERE friendship_id=${friendship.friendship_id}`;
+    }
+
+    async acceptRequest(friendship: FriendshipModel) {
+        await sql`UPDATE friendships SET request_state = 'ACCEPTED' WHERE friendship_id=${friendship.friendship_id} AND request_state = 'PENDING'`;
     }
 
     async searchFriendship(user_sender: UserModel, user_receive: UserModel): Promise<FriendshipModel | null> {
@@ -32,4 +41,6 @@ export class FriendshipRepository {
 
         return friendship;
     }
+
+
 }
