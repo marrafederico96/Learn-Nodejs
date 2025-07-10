@@ -1,8 +1,7 @@
 import { FriendshipDto } from "../dto/FriendshipDto";
 import { FriendshipException } from "../exceptions/friendshipException";
 import { UserException } from "../exceptions/UserException";
-import { FriendshipModel } from "../models/friendshipModel";
-import { RequestState } from "../models/frindshipRequestState";
+import { FriendshipModel, RequestState } from "../models/friendshipModel";
 import { UserModel } from "../models/userModel";
 import { FriendshipRepository } from "../repository/friendshipRepository";
 import { UserRepository } from "../repository/userRepository";

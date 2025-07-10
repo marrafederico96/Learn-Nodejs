@@ -1,4 +1,3 @@
-
 export interface FriendshipModel {
     friendship_id: number,
     user_sender_id: number,

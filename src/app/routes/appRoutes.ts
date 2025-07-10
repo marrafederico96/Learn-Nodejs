@@ -5,11 +5,13 @@ import { validateBody } from "../middleware/validateBodyMiddleware";
 import { UserLoginSchema, UserRegisterSchema } from "../dto/UserDto";
 import { FriendshipController } from "../controllers/friendshipController";
 import { FriendshipUsernameSchema } from "../dto/FriendshipDto";
+import { GroupDeleteSchema, GroupNameSchema } from "../dto/GroupDto";
+import { GroupController } from "../controllers/groupController";
 
 const router = express.Router();
 const authController = new AuthController();;
 const friendshipController = new FriendshipController();
-
+const groupController = new GroupController();
 
 //Endpoint auth user
 router.post("/auth/register", validateBody(UserRegisterSchema), authController.register.bind(authController));
@@ -25,4 +27,7 @@ router.post("/user/accept-request", checkJwt, validateBody(FriendshipUsernameSch
 router.delete("/user/decline-request", checkJwt, validateBody(FriendshipUsernameSchema), friendshipController.deleteFriend.bind(friendshipController));
 
 
+//endpoint group
+router.post("/user/group/create", checkJwt, validateBody(GroupNameSchema), groupController.create.bind(groupController));
+router.delete("/user/group/delete", checkJwt, validateBody(GroupDeleteSchema), groupController.delete.bind(groupController));
 export default router;

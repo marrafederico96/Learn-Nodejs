@@ -33,7 +33,7 @@ export class AuthController {
         try {
             const username = (req as any).user?.username;
             if (!username) {
-                return res.status(401).json({ error: "Utente non autenticato" });
+                return res.status(401).json({ error: "User not authenitcated" });
             }
             await this.userService.logoutUser(username);
             res.clearCookie("refresh_token", {
@@ -52,7 +52,7 @@ export class AuthController {
         try {
             const username = (req as any).user?.username;
             if (!username) {
-                return res.status(401).json({ error: "Utente non autenticato" });
+                return res.status(401).json({ error: "User not authenitcated" });
             }
             await this.userService.deleteUser(username);
             res.clearCookie("refresh_token", {
