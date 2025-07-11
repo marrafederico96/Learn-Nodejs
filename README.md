@@ -10,6 +10,8 @@ Questo progetto è un backend realizzato in Node.js che implementa le funzionali
 - **Invio richiesta di amicizia**
 - **Accettazione richiesta di amicizia**
 - **Rimozione amici**
+- **Creazione gruppo**
+- **Eliminzazione gruppo**
 
 ## Tecnologie utilizzate
 
