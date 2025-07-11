@@ -15,14 +15,25 @@ export class GroupService {
 
     async createGroup(admin_username: string, group_name: string) {
         const admin_user: UserModel | null = await this.userRepository.findUserByUsername(admin_username);
+
         if (!admin_user) {
             throw new UserException("User admin not found");
         }
+
+        const result = await this.groupRepository.findGroupByGroupNameAndAdminId(admin_user, group_name.trimStart().trimEnd());
+
+        if (result != null) {
+            throw new GroupException("Group already exists");
+        }
+
         await this.groupRepository.createGroup(admin_user.user_id, group_name.trimEnd().trimStart());
-        const group = await this.groupRepository.findGroupByName(group_name);
-        if (!group) {
+
+        const group = await this.groupRepository.findGroupByName(group_name.trimStart().trimEnd());
+
+        if (group == null) {
             throw new GroupException("Group not found");
         }
+
         const groupMember: GroupMemberDto = {
             user_id: admin_user.user_id,
             member_role: MemberRole.ADMIN,

@@ -1,13 +1,8 @@
 import sql from "../../db";
-import { GroupDto } from "../dto/GroupDto";
-import { GroupException } from "../exceptions/groupException";
-import { UserException } from "../exceptions/UserException";
 import { GroupModel } from "../models/groupModel";
 import { UserModel } from "../models/userModel";
-import { UserRepository } from "./userRepository";
 
 export class GroupRepository {
-    private userRepository = new UserRepository();
 
     async createGroup(admin_id: number, group_name: string) {
         await sql`INSERT INTO groups (group_name, admin_id) VALUES (${group_name}, ${admin_id})`;
@@ -21,7 +16,7 @@ export class GroupRepository {
         const result: GroupModel[] = await sql`SELECT * FROM groups WHERE group_name=${group_name}`;
 
         if (result.length === 0) {
-            throw new GroupException("Group not found");
+            return null;
         }
 
         const groupModel: GroupModel = {
@@ -36,7 +31,7 @@ export class GroupRepository {
         const result: GroupModel[] = await sql`SELECT * FROM groups WHERE group_name=${group_name} AND admin_id=${user.user_id}`;
 
         if (result.length === 0) {
-            throw new GroupException("Group not found");
+            return null;
         }
 
         const groupModel: GroupModel = {

@@ -1,6 +1,5 @@
 import sql from "../../db";
 import { UserInfoDto } from "../dto/UserDto";
-import { UserException } from "../exceptions/UserException";
 import { UserModel } from "../models/userModel";
 
 export class UserRepository {
@@ -19,7 +18,7 @@ export class UserRepository {
             WHERE user_id=${user_id}`;
 
         if (result.length === 0) {
-            throw new UserException("User not found");
+            return null;
         }
         const user: UserModel = {
             user_id: result[0].user_id,

@@ -28,7 +28,7 @@ export class FriendshipRepository {
         OR (user_sender_id=${user_receive.user_id} AND user_receive_id=${user_sender.user_id})`;
 
         if (result.length === 0) {
-            throw new FriendshipException("Friendship not found");
+            return null;
         }
 
         const friendship: FriendshipModel = {
